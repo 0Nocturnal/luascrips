@@ -289,12 +289,10 @@ end
 
 local function dropInventory()
     print("inventory full, trying to drop logs")
-    local i = 0
     for _, item in ipairs(API.ReadInvArrays33()) do
-        for _, v in pairs(logIds) do
+        for _, v in pairs({13435, 335, 331}) do
             if (item.itemid1 == v) then
-                API.DoAction_Interface(0x24, item.itemid1, 8, 1473, 5, i, API.OFF_ACT_GeneralInterface_route2)
-                i = i + 1
+                API.DoAction_Inventory1(item.itemid1, 0, 8, API.OFF_ACT_GeneralInterface_route)
                 API.RandomSleep2(200, 100, 200)
             end
         end
