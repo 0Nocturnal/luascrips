@@ -6,7 +6,7 @@
 
 ## ⚡️ Quick start
 
-Download [Simple Woodcutting](SimpleWoodcutting.lua) and place into the Lua_Scripts folder<br>
+Download [Simple Woodcutting](SimpleWood%20cutting.lua) and place into the Lua_Scripts folder<br>
 Start the script
 
 ## 📖 Information
