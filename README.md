@@ -1,2 +1,2 @@
-# luascrips
+# luascripts
 Lua scripts for Memory Error
