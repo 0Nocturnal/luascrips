@@ -1,14 +1,14 @@
 <a name="readme-top"></a>
 <div align="center">
   <a href="https://github.com/0Nocturnal/luascripts">
-    <img src="Basic WC.png" alt="wc">
+    <img src="Basic_WC.png" alt="wc">
   </a>
   <h3 align="center">Simple Woodcuting</h3>
 </div>
 
 ## ⚡️ Quick start
 
-Download [Basic Woodcutting](Simple_Woodcutting.lua) and place into the Lua_Scripts folder<br>
+Download [Simple Woodcutting](Simple_Woodcutting.lua) and place into the Lua_Scripts folder<br>
 Start the script
 
 ## 📖 Information
