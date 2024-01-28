@@ -1,7 +1,7 @@
 <a name="readme-top"></a>
 <div align="center">
   <a href="https://github.com/0Nocturnal/luascripts">
-    <img src="Basic_WC.png" alt="wc">
+    <img src="Simple Woodcutting/images/Basic WC.png" alt="wc">
   </a>
   <h3 align="center">Simple Woodcuting</h3>
 </div>
