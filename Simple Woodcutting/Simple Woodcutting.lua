@@ -1,12 +1,3 @@
---[[
-    Description: Basic woodcuting script to get easy xp
-
-    Author: Nocturnal
-    Version: 1.0
-    Release Date: 28/01/2024
-]]
-
-
 local API = require("api")
 local startTime, afk = os.time(), os.time()
 local runScript = false
@@ -15,78 +6,12 @@ local itemToGather = "None"
 
 
 -- #region Config
-local maxIdleMinutes = 10
 local actionSpots = {"Tree", "Oak", "Willow", "Maple Tree", "Yew"}
 local logIds = {1511, 1521, 1519, 1517, 1515}
 -- #endregion
 
 
 --========GUI stuff========
--- Progress bars by @higgins
-local startXp = API.GetSkillXP("WOODCUTTING")
-local function round(val, decimal)
-    if decimal then
-        return math.floor((val * 10 ^ decimal) + 0.5) / (10 ^ decimal)
-    else
-        return math.floor(val + 0.5)
-    end
-end
-
-local function formatNumber(num)
-    if num >= 1e6 then
-        return string.format("%.1fM", num / 1e6)
-    elseif num >= 1e3 then
-        return string.format("%.1fK", num / 1e3)
-    else
-        return tostring(num)
-    end
-end
-
--- Format script elapsed time to [hh:mm:ss]
-local function formatElapsedTime(startTime)
-    local currentTime = os.time()
-    local elapsedTime = currentTime - startTime
-    local hours = math.floor(elapsedTime / 3600)
-    local minutes = math.floor((elapsedTime % 3600) / 60)
-    local seconds = elapsedTime % 60
-    return string.format("[%02d:%02d:%02d]", hours, minutes, seconds)
-end
-
-local function calcProgressPercentage(skill, currentExp)
-    local currentLevel = API.XPLevelTable(API.GetSkillXP(skill))
-    if currentLevel == 120 then return 100 end
-    local nextLevelExp = XPForLevel(currentLevel + 1)
-    local currentLevelExp = XPForLevel(currentLevel)
-    local progressPercentage = (currentExp - currentLevelExp) / (nextLevelExp - currentLevelExp) * 100
-    return math.floor(progressPercentage)
-end
-
-local function printProgressReport(final)
-    local skill = "WOODCUTTING"
-    local currentXp = API.GetSkillXP(skill)
-    local elapsedMinutes = (os.time() - startTime) / 60
-    local diffXp = math.abs(currentXp - startXp);
-    local xpPH = round((diffXp * 60) / elapsedMinutes);
-    local time = formatElapsedTime(startTime)
-    local currentLevel = API.XPLevelTable(API.GetSkillXP(skill))
-    IGP.radius = calcProgressPercentage(skill, API.GetSkillXP(skill)) / 100
-    IGP.string_value = time ..
-    " | " ..
-    string.lower(skill):gsub("^%l", string.upper) ..
-    ": " .. currentLevel .. " | XP/H: " .. formatNumber(xpPH) .. " | XP: " .. formatNumber(diffXp)
-end
-
-local function setupGUI()
-    IGP = API.CreateIG_answer()
-    IGP.box_start = FFPOINT.new(5, 5, 0)
-    IGP.box_name = "PROGRESSBAR"
-    IGP.colour = ImColor.new(74,103,65);
-    IGP.string_value = "WOODCUTTING"
-end
-
-setupGUI()
-
-
 -- #region Imgui Setup - made by @Dead
 local imguiBackground = API.CreateIG_answer();
 imguiBackground.box_name = "imguiBackground";
@@ -144,7 +69,7 @@ imguiCurrentTarget.colour = COLORS.TARGET_UNSET
 -- #endregion
 
 local function gameStateChecks()
-    local gameState = API.GetGameState()
+    local gameState = API.GetGameState2()
     if (gameState ~= 3) then
         print('Not ingame with state:', gameState)
         API.Write_LoopyLoop(false)
@@ -247,7 +172,6 @@ local function drawGUI()
     API.DrawBox(imguiAction)
     API.DrawBox(imguiTerminate)
     API.DrawTextAt(imguiCurrentTarget)
-    DrawProgressBar(IGP)
 end
 
 populateDropdown()
@@ -259,7 +183,7 @@ populateDropdown()
 --========IDLE========
 local function idleCheck()
     local timeDiff = os.difftime(os.time(), afk)
-    local randomTime = math.random((10 * 60) * 0.6, (10 * 60) * 0.9)
+    local randomTime = math.random((5 * 60) * 0.6, (5 * 60) * 0.9)
 
     if timeDiff > randomTime then
         API.PIdle2()
@@ -312,6 +236,10 @@ local function chopChop()
     end
 end
 
+API.SetDrawTrackedSkills(true)
+API.ScriptRuntimeString()
+API.GetTrackedSkills()
+
 while (API.Read_LoopyLoop()) do 
     API.DoRandomEvents()
     gameStateChecks()
@@ -320,6 +248,7 @@ while (API.Read_LoopyLoop()) do
     if runScript then
         chopChop()
     end
-    printProgressReport()
     API.RandomSleep2(600, 200, 3000)
 end 
+
+API.SetDrawTrackedSkills(false)
