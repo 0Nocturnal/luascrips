@@ -4,7 +4,6 @@ local runScript = false
 local targetNotFoundCount = 0
 local itemToGather = "None"
 
-
 -- #region Config
 local actionSpots = {"Tree", "Oak", "Willow", "Maple Tree", "Yew"}
 local logIds = {1511, 1521, 1519, 1517, 1515}

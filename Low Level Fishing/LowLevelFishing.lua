@@ -2,7 +2,6 @@ local API = require("api")
 local startTime os.time()
 local afk = os.time()
 
-
 -- ========IDLE========
 local function idleCheck()
     local timeDiff = os.difftime(os.time(), afk)
