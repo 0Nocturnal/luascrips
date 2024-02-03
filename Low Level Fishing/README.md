@@ -14,8 +14,8 @@ Start the script
 This script will try to fish in the nearest fishing spot and drop the fishes for power leveling.
 
 Current supported fishes:
-- Raw crayfish
-- Fly Fishing
+lvl 1. Raw crayfish
+lvl 20. Fly Fishing
  - Trout
  - Salmon
 
