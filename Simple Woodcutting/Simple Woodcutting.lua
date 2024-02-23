@@ -99,7 +99,7 @@ local function getDistinctValues(inputTable)
   end
 
 local function populateDropdown()
-    local allNPCS = API.ReadAllObjectsArray(false, 0)
+    local allNPCS = API.ReadAllObjectsArray({12}, {-1}, {})
     local objects = {}
     if #allNPCS > 0 then
         for _, a in pairs(allNPCS) do
