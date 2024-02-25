@@ -4,7 +4,7 @@
     Last update: 24/02/2024
     ME Version: 1.77
 
-    Contribuitors: 
+    Contributors: 
     @dea.d
     @higginshax
 
