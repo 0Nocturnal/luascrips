@@ -1,6 +1,19 @@
+--[[
+    
+    Author: @nctrl_
+    Last update: 24/02/2024
+    ME Version: 1.77
+
+    Contributors: 
+    @dea.d
+    @higginshax
+
+]]--
+
 local API = require("api")
 local startTime os.time()
 local afk = os.time()
+
 
 -- ========IDLE========
 local function idleCheck()
@@ -47,7 +60,7 @@ while API.Read_LoopyLoop() do
         if API.InvFull_() then
             dropInventory()
         end
-        local spots = API.GetAllObjArrayInteract_str({"Fishing spot"}, 50, 1)
+        local spots = API.GetAllObjArrayInteract_str({"Fishing spot"}, 50, {1})
         if #spots > 0 then
             if spots[1].Action == "Lure" and API.InvStackSize(314) < 1 then
                 API.Write_LoopyLoop(false)
