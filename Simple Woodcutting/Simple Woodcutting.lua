@@ -8,27 +8,25 @@
     @dea.d
     @higginshax
 
-]]--
-
-
+]] --
 local API = require("api")
 local startTime, afk = os.time(), os.time()
 local runScript = false
 local targetNotFoundCount = 0
 local itemToGather = "None"
+local shouldBank = false
 
 -- #region Config
 local actionSpots = {"Tree", "Oak", "Willow", "Maple Tree", "Yew", "Ivy"}
 local logIds = {1511, 1521, 1519, 1517, 1515}
 -- #endregion
 
-
---========GUI stuff========
+-- ========GUI stuff========
 -- #region Imgui Setup - made by @Dead
 local imguiBackground = API.CreateIG_answer();
 imguiBackground.box_name = "imguiBackground";
 imguiBackground.box_start = FFPOINT.new(5, 50, 0);
-imguiBackground.box_size = FFPOINT.new(280, 130, 0)
+imguiBackground.box_size = FFPOINT.new(350, 130, 0)
 
 local getTargetBtn = API.CreateIG_answer();
 getTargetBtn.box_name = "Get";
@@ -64,8 +62,12 @@ imguiTerminate.box_start = FFPOINT.new(90, 90, 0);
 imguiTerminate.box_size = FFPOINT.new(100, 30, 0);
 imguiTerminate.tooltip_text = "Exit the script"
 
-API.DrawComboBox(imguicombo, false)
+local imguiBank = API.CreateIG_answer()
+imguiBank.box_name = "Bank Logs"
+imguiBank.tooltip_text = "Banking: false"
+imguiBank.box_start = FFPOINT.new(200, 90, 0)
 
+API.DrawComboBox(imguicombo, false)
 
 local COLORS = {
     BACKGROUND = ImColor.new(10, 13, 29),
@@ -101,7 +103,7 @@ end
 local function getDistinctValues(inputTable)
     local distinctValues = {}
     local seenValues = {}
-  
+
     for _, value in ipairs(inputTable) do
         if not seenValues[value] then
             table.insert(distinctValues, value)
@@ -109,7 +111,7 @@ local function getDistinctValues(inputTable)
         end
     end
     return distinctValues
-  end
+end
 
 local function populateDropdown()
     local allNPCS = API.ReadAllObjectsArray({0, 12}, {-1}, {})
@@ -184,15 +186,20 @@ local function drawGUI()
     API.DrawBox(imguiAction)
     API.DrawBox(imguiTerminate)
     API.DrawTextAt(imguiCurrentTarget)
+    API.DrawCheckbox(imguiBank)
+    local bankStatus = imguiBank.box_ticked
+    if bankStatus ~= shouldBank then
+        shouldBank = bankStatus
+        imguiBank.tooltip_text = "Banking: " .. tostring(shouldBank)
+    end
 end
 
 populateDropdown()
 
-
 -- #endregion
---========GUI stuff========
+-- ========GUI stuff========
 
---========IDLE========
+-- ========IDLE========
 local function idleCheck()
     local timeDiff = os.difftime(os.time(), afk)
     local randomTime = math.random((5 * 60) * 0.6, (5 * 60) * 0.9)
@@ -202,7 +209,7 @@ local function idleCheck()
         afk = os.time()
     end
 end
---========IDLE========
+-- ========IDLE========
 
 local function cutNearestTree()
     if itemToGather == "None" then
@@ -213,7 +220,7 @@ local function cutNearestTree()
     local trees = API.GetAllObjArrayInteract_str({itemToGather}, 50, {12})
 
     for _, tree in ipairs(trees) do
-        if API.DoAction_Object_valid2(0x3B, 0, { tree.Id }, 50, WPOINT.new(tree.TileX / 512, tree.TileY / 512, 1), true) then
+        if API.DoAction_Object_valid2(0x3B, 0, {tree.Id}, 50, WPOINT.new(tree.TileX / 512, tree.TileY / 512, 1), true) then
             API.RandomSleep2(1200, 100, 200)
             API.WaitUntilMovingEnds()
             return true
@@ -228,7 +235,7 @@ local function dropInventory()
     for _, item in ipairs(API.ReadInvArrays33()) do
         for _, v in pairs(logIds) do
             if (item.itemid1 == v) then
-                API.DoAction_Interface(0x24,0x5ed,8,1473,5,item.index, API.OFF_ACT_GeneralInterface_route2)
+                API.DoAction_Interface(0x24, 0x5ed, 8, 1473, 5, item.index, API.OFF_ACT_GeneralInterface_route2)
                 API.RandomSleep2(200, 100, 200)
             end
         end
@@ -236,10 +243,28 @@ local function dropInventory()
     API.RandomSleep2(1200, 100, 200)
 end
 
+local function bank()
+    if API.BankOpen2() then
+        API.DoAction_Interface(0xffffffff, 0xffffffff, 1, 517, 39, -1, API.OFF_ACT_GeneralInterface_route)
+        API.RandomSleep2(1200, 100, 200)
+    end
+
+    if not API.DoAction_Object_string1(0x5, API.OFF_ACT_GeneralObject_route1, {"Bank booth", "Counter"}, 75, false) then
+        print("There is no bank nearby")
+        API.Write_LoopyLoop(false)
+    end
+    API.WaitUntilMovingEnds()
+end
+
 local function chopChop()
     if not API.CheckAnim(20) then
         if API.InvFull_() then
-            dropInventory()
+            if shouldBank then
+                bank()
+            else
+                dropInventory()
+            end
+            return
         end
         if not cutNearestTree() then
             print("No chopable tree found. Terminating...")
@@ -252,7 +277,7 @@ API.SetDrawTrackedSkills(true)
 API.ScriptRuntimeString()
 API.GetTrackedSkills()
 
-while (API.Read_LoopyLoop()) do 
+while (API.Read_LoopyLoop()) do
     API.DoRandomEvents()
     gameStateChecks()
     drawGUI()
@@ -261,6 +286,6 @@ while (API.Read_LoopyLoop()) do
         chopChop()
     end
     API.RandomSleep2(600, 200, 3000)
-end 
+end
 
 API.SetDrawTrackedSkills(false)
