@@ -249,7 +249,7 @@ local function bank()
         API.RandomSleep2(1200, 100, 200)
     end
 
-    if not API.DoAction_Object1(0x5,API.OFF_ACT_GeneralObject_route1,{ 25688 },50) then
+    if not API.DoAction_Object1(0x5,API.OFF_ACT_GeneralObject_route1,{ 25688, 2045, 2015, 2012, 2019  },50) then
         print("There is no bank nearby")
         API.Write_LoopyLoop(false)
     end
